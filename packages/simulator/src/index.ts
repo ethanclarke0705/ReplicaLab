@@ -12,3 +12,5 @@ export { Transport } from './transport.js';
 export type { NetworkConditions, SendOptions } from './transport.js';
 export { Simulation } from './simulation.js';
 export type { ReplicaEndpoint, SimulationOptions } from './simulation.js';
+export { runScenario, scenarioNames } from './scenarios.js';
+export type { ScenarioName, ScenarioResult } from './scenarios.js';

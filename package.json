@@ -16,6 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "demo": "pnpm build && node examples/reconciliation.mjs",
+    "demo:network": "pnpm build && node examples/network-scenarios.mjs",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "devDependencies": {

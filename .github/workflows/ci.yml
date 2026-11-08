@@ -17,3 +17,5 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
+      - run: node examples/reconciliation.mjs
+      - run: node examples/network-scenarios.mjs
