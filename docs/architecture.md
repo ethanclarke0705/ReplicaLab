@@ -2,6 +2,10 @@
 
 The core owns replica state, logical time, operation history and deterministic resolution. It exports ESM and TypeScript declarations, with no runtime dependencies. Tests run in Node without a browser.
 
+Implemented modules are `clock.ts` (safe Lamport arithmetic), `value.ts` (JSON validation and immutable copies), `operation.ts` (wire records and ordering), and `replica.ts` (state, history and exchange primitives). `index.ts` defines the public API. The core targets ES2022 and uses no DOM types or Node APIs. `examples/reconciliation.mjs` verifies the built ESM in Node.
+
+Each replica owns private maps of known operations and winning operations. Incoming records are validated before any mutation. Values and operations are deeply immutable; visible maps are detached snapshots. No hidden singleton state, timers or shared mutable replica state are used.
+
 The future simulator will own delivery, scheduling, seedable randomness, network links and retries. It must exchange operations through public core APIs rather than mutate replica internals. A later React/Vite playground will display real state and events from those layers.
 
 Start with full operation history and explicit known-ID exchange. This is easy to inspect and supports gaps caused by out-of-order delivery. A maximum sequence number alone is not sufficient to identify missing operations. Compaction and transport optimisation are deferred until they have a proven protocol.
