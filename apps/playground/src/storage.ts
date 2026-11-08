@@ -1,5 +1,17 @@
 import type { LabCheckpoint } from './session.js';
 
+export function storageErrorMessage(error: unknown): string {
+  // DOMExceptions need not inherit Error across browser/DOM realms.
+  if (
+    error &&
+    typeof error === 'object' &&
+    'message' in error &&
+    typeof error.message === 'string'
+  )
+    return error.message;
+  return 'Browser storage is unavailable.';
+}
+
 export class StorageConflict extends Error {
   constructor() {
     super(

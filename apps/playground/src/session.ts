@@ -91,7 +91,7 @@ export class LabSession {
       if (
         !Array.isArray(flags) ||
         flags.length !== 3 ||
-        flags.some((flag) => typeof flag !== 'boolean')
+        Array.from(flags).some((flag) => typeof flag !== 'boolean')
       )
         throw new TypeError('Invalid saved connectivity');
     }

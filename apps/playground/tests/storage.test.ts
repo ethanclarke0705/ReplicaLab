@@ -2,6 +2,19 @@ import { IDBFactory } from 'fake-indexeddb';
 import { expect, test } from 'vitest';
 import { LabSession } from '../src/session.js';
 import { openLabStore, StorageConflict } from '../src/storage.js';
+import { scenarioNames } from '@replicalab/simulator';
+
+test('all real scenario histories can be restored and continued', () => {
+  for (const name of scenarioNames) {
+    const lab = new LabSession(42, name);
+    const restored = LabSession.restore(lab.checkpoint());
+    expect(restored.checkpoint()).toEqual(lab.checkpoint());
+    restored.write('a', 'after-reload', 'continued', 'text');
+    restored.simulation.network.configure({ loss: 0, latency: 10, jitter: 0 });
+    restored.simulation.advanceBy(2000);
+    expect(restored.simulation.converged).toBe(true);
+  }
+});
 
 test('atomically restores offline data, identities, counters, tombstones and connectivity after reopening', async () => {
   const factory = new IDBFactory();

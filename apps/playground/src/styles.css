@@ -1166,3 +1166,33 @@ footer span span {
     scroll-behavior: auto !important;
   }
 }
+:root .lab-controls {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.storage-status {
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  border: 1px solid var(--border, #dce2d7);
+  border-radius: 8px;
+  background: #f0f3e9;
+}
+
+.storage-status p {
+  margin: 0 0 6px;
+}
+.storage-status small {
+  display: block;
+  line-height: 1.6;
+}
+.storage-start {
+  max-width: 700px;
+  margin: 8vh auto;
+  padding: 24px;
+}
+.storage-start button {
+  margin: 8px 12px 8px 0;
+}

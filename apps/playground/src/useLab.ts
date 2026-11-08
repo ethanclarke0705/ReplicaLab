@@ -1,19 +1,32 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ScenarioName } from '@replicalab/simulator';
-import { LabSession } from './session.js';
+import { LabSession, type LabCheckpoint } from './session.js';
 
-export function useLab() {
-  const [initial] = useState(() => new LabSession());
+export interface LabOptions {
+  initialSession?: LabSession;
+  onCheckpoint?: (checkpoint: LabCheckpoint) => void;
+  blocked?: boolean;
+  restored?: boolean;
+}
+
+export function useLab(options: LabOptions = {}) {
+  const [initial] = useState(() => options.initialSession ?? new LabSession());
+  const currentOptions = useRef(options);
+  currentOptions.current = options;
   const session = useRef(initial);
+  const lastCheckpoint = useRef(JSON.stringify(initial.checkpoint()));
   const [view, setView] = useState(() => initial.snapshot());
   const [running, setRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generation, setGeneration] = useState(0);
   const [notice, setNotice] = useState(
-    'Ready. Edit any replica, then advance time to deliver its changes.',
+    options.restored
+      ? 'Saved replicas restored. Simulation restarted paused; advance time to reconcile missing operations.'
+      : 'Ready. Edit any replica, then advance time to deliver its changes.',
   );
 
   const perform = useCallback((action: (lab: LabSession) => void) => {
+    if (currentOptions.current.blocked) return false;
     try {
       action(session.current);
       setError(null);
@@ -28,6 +41,14 @@ export function useLab() {
       return false;
     } finally {
       setView(session.current.snapshot());
+      if (currentOptions.current.onCheckpoint) {
+        const checkpoint = session.current.checkpoint();
+        const encoded = JSON.stringify(checkpoint);
+        if (encoded !== lastCheckpoint.current) {
+          lastCheckpoint.current = encoded;
+          currentOptions.current.onCheckpoint(checkpoint);
+        }
+      }
     }
   }, []);
 
@@ -48,7 +69,7 @@ export function useLab() {
   );
 
   useEffect(() => {
-    if (!running) return;
+    if (!running || options.blocked) return;
     const timer = window.setInterval(() => {
       if (session.current.simulation.events().length >= 15_000) {
         setRunning(false);
@@ -62,7 +83,11 @@ export function useLab() {
       });
     }, 100);
     return () => window.clearInterval(timer);
-  }, [running, perform]);
+  }, [running, perform, options.blocked]);
+
+  useEffect(() => {
+    if (options.blocked) setRunning(false);
+  }, [options.blocked]);
 
   return {
     view,
