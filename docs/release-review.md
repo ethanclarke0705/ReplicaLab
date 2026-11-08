@@ -62,6 +62,28 @@ The latest verified application deployment uses commit `1fe568db00f618307299ddbe
 
 No Dependabot PRs remained open at verification time. All workspace packages remain private, and nothing was published to npm. The v0.1.0 tag remains unchanged; these workflow updates are subsequent commits on `main`.
 
+## Automated browser coverage and hosted CI - 2026-11-08
+
+Commits `6b9e7e3` and `f992da2` add four Playwright Chromium regression tests and integrate them into the Linux and Windows CI jobs. The suite serves the production build at `/ReplicaLab/`, uses the real engine, simulator and IndexedDB, and gives each test a fresh browser context. Tests advance simulated time through the UI without fixed sleeps or mocked storage.
+
+The automated coverage verifies:
+
+- Offline edits remain local while simulated time advances; other replicas retain their original values.
+- Reload restores offline connectivity, values, history and counters; a subsequent write continues the sequence and Lamport clock.
+- Reconnection reconciles the offline operation to every replica and restores convergence.
+- Conflict inspection identifies the losing operation, explains the tie-break and retains the superseded write in history.
+
+[Hosted CI run 42497222837](https://github.com/ethanclarke0705/ReplicaLab/actions/runs/42497222837) completed successfully for `f992da2d50a75359f1b821199825ab8257618263`:
+
+| Platform                   | Browser tests                  | Other checks                                                                                                                                                                          |
+| -------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Linux (`ubuntu-latest`)    | All four Chromium tests passed | 122 Vitest tests, one Node tooling test, formatting, lint, strict types, builds, repository checks and executable examples passed; dependency audit reported no known vulnerabilities |
+| Windows (`windows-latest`) | All four Chromium tests passed | The same release checks passed; the dependency audit runs only on Linux by design                                                                                                     |
+
+Run `pnpm test:browser` locally after installing Chromium as described in [Contributing](../CONTRIBUTING.md#browser-regression-tests). Browser tests are separate from `pnpm check` and `pnpm release:check`; CI invokes them after the production build. Failed runs retain traces, screenshots and an HTML report under ignored `output/browser/`, uploaded by CI for seven days. Retries are disabled so a failure is not hidden by a later attempt.
+
+This run validates the production bundle on CI's local server, not the public Pages origin. The latest public deployment remains `1fe568d`, documented above; the test and CI additions do not change application code. Coverage is Chromium-only and does not replace the focused manual layout checks or a full accessibility audit. Nothing was published to npm.
+
 Publishing remains manually dispatched; pushing a commit does not deploy it. The first GitHub release is v0.1.0. npm publication remains out of scope.
 
 The browser checks are focused functional/layout checks, not a comprehensive accessibility audit or cross-browser certification. IndexedDB schema migration beyond version 1 is unimplemented. Full histories and whole-checkpoint writes remain intended for small demonstrations.
