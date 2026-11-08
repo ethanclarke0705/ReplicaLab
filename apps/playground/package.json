@@ -7,7 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
-    "build": "tsc --noEmit && vite build"
+    "build": "tsc --noEmit && vite build && node ../../scripts/write-demo-notices.mjs"
   },
   "dependencies": {
     "@replicalab/core": "workspace:*",

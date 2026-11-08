@@ -11,10 +11,11 @@ test('static verification rejects root-only links, missing assets and accidental
     await mkdir(join(dir, 'assets'));
     await writeFile(join(dir, 'assets/app.js'), 'export {};');
     await writeFile(join(dir, 'assets/app.css'), 'body {}');
+    await writeFile(join(dir, 'NOTICE.txt'), 'Test fixture license notice');
     const page = (js) =>
       `<script type="module" src="${js}"></script><link href="./assets/app.css">`;
     await writeFile(join(dir, 'index.html'), page('./assets/app.js'));
-    assert.equal((await inspectDemo(dir)).length, 3);
+    assert.equal((await inspectDemo(dir)).length, 4);
     await writeFile(join(dir, 'index.html'), page('/assets/app.js'));
     await assert.rejects(inspectDemo(dir), /must be relative/);
     await writeFile(join(dir, 'index.html'), page('./assets/missing.js'));

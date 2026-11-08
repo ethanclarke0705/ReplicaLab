@@ -29,6 +29,10 @@ export async function inspectDemo(directory) {
     }
   }
   await walk(root);
+  assert(
+    files.some((file) => file.path === 'NOTICE.txt'),
+    'Missing distribution license notices',
+  );
   const html = await readFile(resolve(root, 'index.html'), 'utf8');
   assert(html.includes('type="module"'), 'Missing browser module entry');
   const references = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(
