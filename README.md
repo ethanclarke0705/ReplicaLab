@@ -92,17 +92,18 @@ for (const op of phone.missingOperations(laptop.knownOperationIds())) {
 
 ## Verify and explore
 
-| Command              | Purpose                                                                                           |
-| -------------------- | ------------------------------------------------------------------------------------------------- |
-| `pnpm check`         | Formatting, lint, strict types, tests, builds and static demo verification                        |
-| `pnpm release:check` | All checks, tracked/history signature scan, local documentation links and all executable examples |
-| `pnpm test:watch`    | Interactive Vitest development                                                                    |
-| `pnpm demo`          | [Offline reconciliation](examples/reconciliation.mjs)                                             |
-| `pnpm demo:network`  | [Eight fault scenarios](examples/network-scenarios.mjs)                                           |
-| `pnpm demo:restore`  | [Checkpoint recovery and counter continuation](examples/restoration.mjs)                          |
-| `pnpm audit`         | Current dependency advisories; requires registry access                                           |
+| Command              | Purpose                                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------------------------ |
+| `pnpm check`         | Formatting, lint, strict types, tests, builds and static demo verification                             |
+| `pnpm release:check` | All checks, tracked/history signature scan, local documentation links and all executable examples      |
+| `pnpm test:watch`    | Interactive Vitest development                                                                         |
+| `pnpm test:browser`  | Build and run four Chromium regressions; see [browser setup](CONTRIBUTING.md#browser-regression-tests) |
+| `pnpm demo`          | [Offline reconciliation](examples/reconciliation.mjs)                                                  |
+| `pnpm demo:network`  | [Eight fault scenarios](examples/network-scenarios.mjs)                                                |
+| `pnpm demo:restore`  | [Checkpoint recovery and counter continuation](examples/restoration.mjs)                               |
+| `pnpm audit`         | Current dependency advisories; requires registry access                                                |
 
-Tests include seeded fast-check properties, simulator integration, storage transactions, UI flows and deployment-artifact checks. CI is configured for Node 24 on Linux and Windows. Local and hosted verification and their limits are recorded in [the release review](docs/release-review.md).
+Tests include seeded fast-check properties, simulator integration, storage transactions, UI flows and deployment-artifact checks. CI is configured for Node 24 on Linux and Windows, including Chromium browser regressions against the production build. Local and hosted verification and their limits are recorded in [the release review](docs/release-review.md).
 
 ## Deployable demo
 
