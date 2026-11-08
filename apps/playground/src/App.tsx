@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useLab } from './useLab.js';
 import { ReplicaCard } from './ReplicaCard.js';
 import { NetworkPanel } from './NetworkPanel.js';
+import { ScenarioPanel } from './ScenarioPanel.js';
+import { Timeline } from './Timeline.js';
 
 export function App() {
   const lab = useLab();
@@ -152,7 +154,10 @@ export function App() {
           </div>
         </section>
         <div className="workbench">
-          <NetworkPanel key={`network-${lab.generation}`} lab={lab} />
+          <div className="sidebar">
+            <NetworkPanel key={`network-${lab.generation}`} lab={lab} />
+            <ScenarioPanel lab={lab} />
+          </div>
           <section className="replicas-region" aria-labelledby="replicas-title">
             <div className="section-heading">
               <div>
@@ -172,6 +177,7 @@ export function App() {
                 />
               ))}
             </div>
+            <Timeline key={`timeline-${lab.generation}`} events={view.events} />
           </section>
         </div>
         <details id="guide" className="guide">

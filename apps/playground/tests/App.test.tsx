@@ -16,6 +16,53 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+test('a real conflict scenario exposes losing-operation metadata in the inspector', async () => {
+  const user = userEvent.setup();
+  render(<App />);
+  await user.selectOptions(
+    screen.getByLabelText('Scenario'),
+    'concurrent-edits',
+  );
+  await user.click(screen.getByRole('button', { name: /Run scenario/ }));
+  expect(
+    screen.getAllByText('Draft C', { selector: '.key-value span' }),
+  ).toHaveLength(3);
+  await user.selectOptions(screen.getByLabelText('Event filter'), 'superseded');
+  const inspector = screen.getByRole('complementary', {
+    name: 'Event details',
+  });
+  expect(within(inspector).getByText(/greater replica ID/)).toBeDefined();
+  expect(within(inspector).getByText('Operation ID')).toBeDefined();
+  await user.type(screen.getByLabelText('Search events'), 'no-such-key');
+  expect(screen.getByText('No matching events')).toBeDefined();
+  await user.click(screen.getByRole('button', { name: 'Reset lab' }));
+  expect(
+    (screen.getByLabelText('Search events') as HTMLInputElement).value,
+  ).toBe('');
+  expect(
+    screen.getAllByText('A shared starting point', {
+      selector: '.key-value span',
+    }),
+  ).toHaveLength(3);
+});
+
+test('scenario replacement resets network controls to the actual scenario settings', async () => {
+  const user = userEvent.setup();
+  render(<App />);
+  await user.selectOptions(
+    screen.getByLabelText('Scenario'),
+    'duplicate-delivery',
+  );
+  await user.click(screen.getByRole('button', { name: /Run scenario/ }));
+  expect((screen.getByLabelText(/Duplication/) as HTMLInputElement).value).toBe(
+    '100',
+  );
+  expect((screen.getByLabelText(/Latency/) as HTMLInputElement).value).toBe(
+    '10',
+  );
+  expect(screen.getByText(/Scenario completed and paused/)).toBeDefined();
+});
+
 test('an offline UI edit stays local and converges after reconnecting and advancing time', async () => {
   const user = userEvent.setup();
   render(<App />);
@@ -102,7 +149,7 @@ test('100% packet loss prevents delivery and manual recovery succeeds after loss
 test('playback advances real simulated time and stops when paused or unmounted', () => {
   vi.useFakeTimers();
   const rendered = render(<App />);
-  fireEvent.click(screen.getByRole('button', { name: /Run/ }));
+  fireEvent.click(screen.getByRole('button', { name: '▶ Run' }));
   act(() => {
     vi.advanceTimersByTime(300);
   });
@@ -112,7 +159,7 @@ test('playback advances real simulated time and stops when paused or unmounted',
     vi.advanceTimersByTime(300);
   });
   expect(screen.getByText('500')).toBeDefined();
-  fireEvent.click(screen.getByRole('button', { name: /Run/ }));
+  fireEvent.click(screen.getByRole('button', { name: '▶ Run' }));
   rendered.unmount();
   expect(vi.getTimerCount()).toBe(0);
 });
