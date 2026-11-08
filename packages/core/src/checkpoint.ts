@@ -3,7 +3,7 @@ import {
   parseOperation,
   type Operation,
 } from './operation.js';
-import { copyJson } from './value.js';
+import { copyJson, type JsonValue } from './value.js';
 
 export interface ReplicaCheckpoint {
   readonly version: 1;
@@ -18,7 +18,10 @@ export function parseCheckpoint(input: unknown): ReplicaCheckpoint {
   const data = copyJson(input);
   if (!data || typeof data !== 'object' || Array.isArray(data))
     throw new TypeError('Replica checkpoint must be an object');
-  const { version, replicaId, logicalTime, localSequence, operations } = data;
+  const { version, replicaId, logicalTime, localSequence, operations } =
+    data as {
+      readonly [key: string]: JsonValue;
+    };
   if (version !== 1 || Object.keys(data).length !== 5)
     throw new TypeError('Unsupported replica checkpoint schema');
   assertReplicaId(replicaId);
