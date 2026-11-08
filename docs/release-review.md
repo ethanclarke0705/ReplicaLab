@@ -1,6 +1,6 @@
 # Release review — 2026-11-08
 
-Scope: prepare the first public release and deployable demo, followed by the owner-authorized push and GitHub Pages deployment. Milestones 0�5 are complete; no release tag or npm package has been published.
+Scope: prepare the first public release and deployable demo, followed by the owner-authorized push and GitHub Pages deployment. Milestones 0-5 are complete; no release tag or npm package has been published.
 
 ## Reviewed results
 
@@ -29,7 +29,7 @@ An independent local checkout passed `pnpm install --offline --frozen-lockfile` 
 - New screenshots contain synthetic demonstration data. No environment file, generated bundle or local diagnostics are tracked. The scan is deliberately bounded: it does not prove the absence of every possible credential or sensitive value, and binaries require visual review.
 - Existing Git author metadata contains a personal email rather than a GitHub no-reply address. History was pushed with owner authorization. No author identity or history was rewritten.
 
-## Hosted verification � 2026-11-08
+## Hosted verification - 2026-11-08
 
 The initial deployment used commit `5f47cd7eb30eb043c170007839be386c82009f83`:
 

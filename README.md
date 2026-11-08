@@ -6,7 +6,7 @@ ReplicaLab is a distributed key-value synchronisation engine and interactive pla
 
 ![Three replicas resolving concurrent writes, with the losing operation explained](docs/images/playground-desktop.jpg)
 
-**Status:** Milestones 0–4 are implemented; Milestone 5 is prepared locally with a manually gated demo workflow. No public demo, release tag or npm package has been published by this work. [Release guide](docs/releasing.md) · [Playground guide](docs/playground.md) · [Architecture](docs/architecture.md)
+**[Open the live demo](https://ethanclarke0705.github.io/ReplicaLab/)** - Milestones 0-5 are complete, with passing hosted CI and a verified GitHub Pages demo. No release tag or npm package has been published. [Release guide](docs/releasing.md) | [Playground guide](docs/playground.md) | [Architecture](docs/architecture.md)
 
 ## Run locally
 
