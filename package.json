@@ -19,7 +19,12 @@
     "test:watch": "vitest",
     "demo": "pnpm build && node examples/reconciliation.mjs",
     "demo:network": "pnpm build && node examples/network-scenarios.mjs",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "demo:restore": "pnpm build && node examples/restoration.mjs",
+    "demo:check": "node scripts/check-demo.mjs",
+    "check:repo": "node scripts/check-repository.mjs --history",
+    "test:tooling": "node --test scripts/tests/demo.test.mjs",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm test:tooling && pnpm build && pnpm demo:check",
+    "release:check": "pnpm check && pnpm check:repo && node examples/reconciliation.mjs && node examples/network-scenarios.mjs && node examples/restoration.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
