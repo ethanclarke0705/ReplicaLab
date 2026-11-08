@@ -9,7 +9,9 @@
   },
   "scripts": {
     "build": "pnpm -r build",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && pnpm --filter @replicalab/playground typecheck",
+    "dev": "pnpm --filter @replicalab/playground dev",
+    "preview": "pnpm --filter @replicalab/playground preview",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -20,6 +22,13 @@
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "6.2.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.8",
+    "jsdom": "31.0.0",
+    "vite": "8.3.6",
     "@eslint/js": "10.0.1",
     "eslint": "10.14.0",
     "fast-check": "4.10.2",
