@@ -3,7 +3,6 @@ import {
   parseOperation,
   type Operation,
 } from './operation.js';
-import { copyJson, type JsonValue } from './value.js';
 
 export interface ReplicaCheckpoint {
   readonly version: 1;
@@ -15,13 +14,18 @@ export interface ReplicaCheckpoint {
 
 /** A checkpoint is untrusted storage input, never a shortcut around validation. */
 export function parseCheckpoint(input: unknown): ReplicaCheckpoint {
-  const data = copyJson(input);
-  if (!data || typeof data !== 'object' || Array.isArray(data))
+  if (!input || typeof input !== 'object' || Array.isArray(input))
     throw new TypeError('Replica checkpoint must be an object');
-  const { version, replicaId, logicalTime, localSequence, operations } =
-    data as {
-      readonly [key: string]: JsonValue;
-    };
+  const descriptors = Object.getOwnPropertyDescriptors(input);
+  if (
+    Reflect.ownKeys(input).length !== 5 ||
+    Object.values(descriptors).some(
+      (field) => !field.enumerable || !('value' in field),
+    )
+  )
+    throw new TypeError('Checkpoint fields must be enumerable data properties');
+  const data = input as Record<string, unknown>;
+  const { version, replicaId, logicalTime, localSequence, operations } = data;
   if (version !== 1 || Object.keys(data).length !== 5)
     throw new TypeError('Unsupported replica checkpoint schema');
   assertReplicaId(replicaId);
@@ -35,7 +39,7 @@ export function parseCheckpoint(input: unknown): ReplicaCheckpoint {
     !Array.isArray(operations)
   )
     throw new TypeError('Invalid checkpoint counters or history');
-  const parsed = operations.map(parseOperation);
+  const parsed = Array.from(operations, parseOperation);
   const origins = new Map<string, Operation[]>();
   const ids = new Set<string>();
   for (const op of parsed) {

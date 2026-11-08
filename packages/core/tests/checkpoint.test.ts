@@ -1,6 +1,14 @@
 import { expect, test } from 'vitest';
 import fc from 'fast-check';
-import { Replica } from '../src/index.js';
+import { Replica, type JsonValue } from '../src/index.js';
+
+test('checkpoint envelopes do not reduce the supported JSON nesting depth', () => {
+  let value: JsonValue = 'leaf';
+  for (let i = 0; i < 98; i++) value = [value];
+  const replica = new Replica('deep');
+  replica.set('value', value);
+  expect(Replica.restore(replica.checkpoint()).get('value')).toEqual(value);
+});
 
 test('restores exact clocks, local identity, tombstones and losing history without replay ticks', () => {
   const a = new Replica('a');
