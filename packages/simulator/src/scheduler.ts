@@ -17,6 +17,7 @@ export class Scheduler<T> {
   #now = 0;
   #nextId = 1;
   #queue: Scheduled<T>[] = [];
+  #running = false;
 
   get now(): number {
     return this.#now;
@@ -39,6 +40,16 @@ export class Scheduler<T> {
   }
 
   step(handle: (event: Scheduled<T>) => void): boolean {
+    this.#assertIdle();
+    this.#running = true;
+    try {
+      return this.#step(handle);
+    } finally {
+      this.#running = false;
+    }
+  }
+
+  #step(handle: (event: Scheduled<T>) => void): boolean {
     const event = this.#queue.shift();
     if (!event) return false;
     this.#now = event.at;
@@ -51,21 +62,32 @@ export class Scheduler<T> {
     handle: (event: Scheduled<T>) => void,
     maxEvents = 100_000,
   ): number {
+    this.#assertIdle();
     assertDuration(duration);
     const target = this.#now + duration;
     assertDuration(target);
     if (!Number.isSafeInteger(maxEvents) || maxEvents < 1)
       throw new RangeError('Event budget must be a positive safe integer');
-    let count = 0;
-    while (this.#queue[0] && this.#queue[0].at <= target) {
-      if (count >= maxEvents)
-        throw new RangeError(
-          'Event budget exhausted; advance again from current time',
-        );
-      this.step(handle);
-      count++;
+    this.#running = true;
+    try {
+      let count = 0;
+      while (this.#queue[0] && this.#queue[0].at <= target) {
+        if (count >= maxEvents)
+          throw new RangeError(
+            'Event budget exhausted; advance again from current time',
+          );
+        this.#step(handle);
+        count++;
+      }
+      this.#now = target;
+      return count;
+    } finally {
+      this.#running = false;
     }
-    this.#now = target;
-    return count;
+  }
+
+  #assertIdle(): void {
+    if (this.#running)
+      throw new Error('Scheduler cannot be advanced from an event handler');
   }
 }

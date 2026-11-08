@@ -11,6 +11,16 @@ function setup(options: SimulationOptions = {}) {
 }
 
 describe('replication over simulated transport', () => {
+  it('rejects invalid delivery options before creating a local operation', () => {
+    const { a, sim } = setup();
+    const before = sim.events();
+    expect(() => sim.set('a', 'x', 1, { delay: -1 })).toThrow();
+    expect(() => sim.delete('a', 'x', { delay: NaN })).toThrow();
+    expect(a.operationCount).toBe(0);
+    expect(a.logicalTime).toBe(0);
+    expect(sim.events()).toEqual(before);
+    expect(sim.network.pending()).toEqual([]);
+  });
   it('uses the public receive interface only when a packet arrives', () => {
     const a = new Replica('a');
     const b = new Replica('b');

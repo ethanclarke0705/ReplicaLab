@@ -116,17 +116,26 @@ export class Transport {
     this.#node(from);
     this.#node(to);
     if (from === to) throw new TypeError('Packets require different endpoints');
-    if (options.delay !== undefined) assertDuration(options.delay);
+    this.validateSendOptions(options);
     const payload = this.#copyPayload(input);
-    // Both possible deadlines are validated before any queue/log/random mutation.
-    assertDuration(
-      this.#clock.now +
-        (options.delay ?? this.#conditions.latency + this.#conditions.jitter),
-    );
+
     const duplicate =
       options.duplicate ?? this.#random.next() < this.#conditions.duplication;
     this.#sendCopy(from, to, payload, options, false);
     if (duplicate) this.#sendCopy(from, to, payload, options, true);
+  }
+
+  /** Preflight for local-edit callers before they commit an operation. */
+  validateSendOptions(options: SendOptions): void {
+    if (options.delay !== undefined) assertDuration(options.delay);
+    for (const flag of [options.drop, options.duplicate]) {
+      if (flag !== undefined && typeof flag !== 'boolean')
+        throw new TypeError('Packet overrides must be booleans');
+    }
+    assertDuration(
+      this.#clock.now +
+        (options.delay ?? this.#conditions.latency + this.#conditions.jitter),
+    );
   }
 
   #sendCopy(

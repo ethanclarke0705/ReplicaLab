@@ -2,6 +2,33 @@ import { describe, expect, it } from 'vitest';
 import { Scheduler, SeededRandom } from '../src/index.js';
 
 describe('simulated scheduler', () => {
+  it('rejects reentrant advancement so callbacks cannot rewind simulated time', () => {
+    const scheduler = new Scheduler<null>();
+    scheduler.schedule(10, null);
+    scheduler.schedule(20, null);
+    scheduler.advanceBy(15, () => {
+      expect(() => scheduler.advanceBy(100, () => {})).toThrow(/handler/);
+      expect(() => scheduler.step(() => {})).toThrow(/handler/);
+    });
+    expect(scheduler.now).toBe(15);
+    expect(scheduler.pending()).toHaveLength(1);
+    scheduler.advanceBy(10, () => {});
+    expect(scheduler.now).toBe(25);
+  });
+
+  it('releases the advancement guard after a handler throws', () => {
+    const scheduler = new Scheduler<null>();
+    scheduler.schedule(1, null);
+    scheduler.schedule(2, null);
+    expect(() =>
+      scheduler.step(() => {
+        throw new Error('handler failed');
+      }),
+    ).toThrow('handler failed');
+    expect(scheduler.now).toBe(1);
+    expect(scheduler.step(() => {})).toBe(true);
+    expect(scheduler.now).toBe(2);
+  });
   it('orders deadlines then insertion, including newly scheduled same-time events', () => {
     const scheduler = new Scheduler<string>();
     scheduler.schedule(20, 'late');

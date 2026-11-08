@@ -93,10 +93,12 @@ export class Simulation {
     value: JsonValue,
     options: SendOptions = {},
   ): Operation {
+    this.#network.validateSendOptions(options);
     return this.#publish(this.#replica(id).set(key, value), options);
   }
 
   delete(id: string, key: string, options: SendOptions = {}): Operation {
+    this.#network.validateSendOptions(options);
     return this.#publish(this.#replica(id).delete(key), options);
   }
 
