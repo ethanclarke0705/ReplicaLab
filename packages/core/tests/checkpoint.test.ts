@@ -10,6 +10,30 @@ test('checkpoint envelopes do not reduce the supported JSON nesting depth', () =
   expect(Replica.restore(replica.checkpoint()).get('value')).toEqual(value);
 });
 
+test('rejects inherited fields and accessor-backed history without invoking accessors', () => {
+  const replica = new Replica('a');
+  replica.set('x', 1);
+  const checkpoint = replica.checkpoint();
+  const inherited = Object.assign(Object.create({ version: 1 }), {
+    ...checkpoint,
+    extra: true,
+  });
+  delete inherited.version;
+  expect(() => Replica.restore(inherited)).toThrow();
+  let invoked = false;
+  const operations = [checkpoint.operations[0]];
+  Object.defineProperty(operations, '0', {
+    get() {
+      invoked = true;
+      return checkpoint.operations[0];
+    },
+  });
+  expect(() => Replica.restore({ ...checkpoint, operations })).toThrow(
+    /dense data array/,
+  );
+  expect(invoked).toBe(false);
+});
+
 test('restores exact clocks, local identity, tombstones and losing history without replay ticks', () => {
   const a = new Replica('a');
   const b = new Replica('b');

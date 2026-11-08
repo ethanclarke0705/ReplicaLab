@@ -19,6 +19,11 @@ export function parseCheckpoint(input: unknown): ReplicaCheckpoint {
   const descriptors = Object.getOwnPropertyDescriptors(input);
   if (
     Reflect.ownKeys(input).length !== 5 ||
+    ['version', 'replicaId', 'logicalTime', 'localSequence', 'operations'].some(
+      (key) => !Object.hasOwn(input, key),
+    ) ||
+    (Object.getPrototypeOf(input) !== Object.prototype &&
+      Object.getPrototypeOf(input) !== null) ||
     Object.values(descriptors).some(
       (field) => !field.enumerable || !('value' in field),
     )
@@ -39,6 +44,13 @@ export function parseCheckpoint(input: unknown): ReplicaCheckpoint {
     !Array.isArray(operations)
   )
     throw new TypeError('Invalid checkpoint counters or history');
+  if (
+    Reflect.ownKeys(operations).length !== operations.length + 1 ||
+    Array.from({ length: operations.length }, (_, index) =>
+      Object.getOwnPropertyDescriptor(operations, String(index)),
+    ).some((field) => !field || !('value' in field))
+  )
+    throw new TypeError('Checkpoint history must be a dense data array');
   const parsed = Array.from(operations, parseOperation);
   const origins = new Map<string, Operation[]>();
   const ids = new Set<string>();
