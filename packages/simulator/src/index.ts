@@ -10,3 +10,5 @@ export type {
 } from './events.js';
 export { Transport } from './transport.js';
 export type { NetworkConditions, SendOptions } from './transport.js';
+export { Simulation } from './simulation.js';
+export type { ReplicaEndpoint, SimulationOptions } from './simulation.js';
