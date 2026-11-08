@@ -7,6 +7,6 @@
 - Run relevant tests during development and `pnpm check` before finishing a milestone. Never weaken assertions to conceal a failure.
 - Review the diff, stage only related files, then create a self-contained Conventional Commit: `type(scope): description`. Include the tests with their implementation. Never rewrite history or push without explicit approval.
 - Keep README and algorithm/architecture docs accurate. Separate implemented capabilities from plans and state the assumptions behind correctness claims.
-- Current authorised scope includes Milestone 5: public-release documentation, examples, security review, CI and deployable demo configuration. Prepare and verify locally; do not deploy, push, create a release or publish packages without further instruction.
+- Current authorised scope includes Milestone 5: public-release documentation, examples, security review, CI and deployable demo configuration. The owner authorized pushing the prepared commits and deploying the GitHub Pages demo, including hosted verification. Future publication requires applicable owner authorization; release tags and package publication remain outside the current scope.
 - No backend, authentication, cloud services, CRDTs or package publication in the initial scope. Do not commit credentials, environment files, build artifacts or temporary output.
 - Use `output/` (ignored) or system temp for diagnostics. Report checks actually run, confirmed commit hashes, limitations and next steps at each milestone.

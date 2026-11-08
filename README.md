@@ -102,7 +102,7 @@ for (const op of phone.missingOperations(laptop.knownOperationIds())) {
 | `pnpm demo:restore`  | [Checkpoint recovery and counter continuation](examples/restoration.mjs)                          |
 | `pnpm audit`         | Current dependency advisories; requires registry access                                           |
 
-Tests include seeded fast-check properties, simulator integration, storage transactions, UI flows and deployment-artifact checks. CI is configured for Node 24 on Linux and Windows. Current local verification and its limits are recorded in [the release review](docs/release-review.md).
+Tests include seeded fast-check properties, simulator integration, storage transactions, UI flows and deployment-artifact checks. CI is configured for Node 24 on Linux and Windows. Local and hosted verification and their limits are recorded in [the release review](docs/release-review.md).
 
 ## Deployable demo
 

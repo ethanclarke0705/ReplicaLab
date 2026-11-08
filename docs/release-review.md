@@ -1,6 +1,6 @@
-# Local release review — 2026-11-08
+# Release review — 2026-11-08
 
-Scope: prepare the first public release and a deployable demo without pushing, deploying, tagging or publishing. Milestones 0–4 remain implemented; Milestone 5's local preparation is complete. Remote configuration and hosted execution are explicitly pending.
+Scope: prepare the first public release and deployable demo, followed by the owner-authorized push and GitHub Pages deployment. Milestones 0�5 are complete; no release tag or npm package has been published.
 
 ## Reviewed results
 
@@ -27,12 +27,20 @@ An independent local checkout passed `pnpm install --offline --frozen-lockfile` 
 - CI is configured to run release checks on Linux and Windows with read-only repository permissions. The separate Pages workflow is manual only, defaults to build-only and grants publishing permissions only to its conditional deploy job.
 - The app remains a static local simulator. No backend, analytics, remote data sync, credentials or npm publication were introduced.
 - New screenshots contain synthetic demonstration data. No environment file, generated bundle or local diagnostics are tracked. The scan is deliberately bounded: it does not prove the absence of every possible credential or sensitive value, and binaries require visual review.
-- Existing Git author metadata contains a personal email rather than a GitHub no-reply address. Review that privacy choice before making history public. No author identity or history was rewritten.
+- Existing Git author metadata contains a personal email rather than a GitHub no-reply address. History was pushed with owner authorization. No author identity or history was rewritten.
 
-## Publication steps still pending
+## Hosted verification � 2026-11-08
 
-No hosted CI run has been claimed for these unpushed commits. Linux execution, the GitHub artifact upload and the actual Pages deployment must be verified after authorization. Pages settings, environment reviewers and branch protections are repository settings; local configuration does not enable them. There is no live demo URL or published release to advertise yet.
+The initial deployment used commit `5f47cd7eb30eb043c170007839be386c82009f83`:
+
+- [CI passed on Linux and Windows](https://github.com/ethanclarke0705/ReplicaLab/actions/runs/42490908221), including 122 Vitest tests, one Node tooling test, builds, repository checks and executable examples. The Linux dependency audit reported no known vulnerabilities.
+- [Build-only Pages run passed](https://github.com/ethanclarke0705/ReplicaLab/actions/runs/42491055043), uploaded the artifact and correctly skipped deployment.
+- [Pages publishing run passed](https://github.com/ethanclarke0705/ReplicaLab/actions/runs/42491157328). Pages uses GitHub Actions, HTTPS is enforced and the deployment environment allows only `main`.
+- The [live demo](https://ethanclarke0705.github.io/ReplicaLab/) and all four referenced/distributed assets returned HTTP 200 with appropriate content types.
+- On the public origin, an offline edit survived reload with replica identity, counters and connectivity intact; reconnection and simulated delivery converged. The concurrent-edit scenario and superseded-operation inspector worked. A 390 px viewport had no horizontal overflow.
+
+Publishing remains manually dispatched; pushing a commit does not deploy it. Release tags, GitHub releases and npm publication have not been performed.
 
 The browser checks are focused functional/layout checks, not a comprehensive accessibility audit or cross-browser certification. IndexedDB schema migration beyond version 1 is unimplemented. Full histories and whole-checkpoint writes remain intended for small demonstrations.
 
-Follow [the release guide](releasing.md) for the authorized push, CI verification, Pages setup, publish step and eventual release tag. Do not treat this review as permission to perform them.
+Follow [the release guide](releasing.md) for subsequent deployments and any separately authorized release tag.

@@ -1,6 +1,6 @@
 # Release and demo deployment
 
-Milestone 5 prepares the repository and deployable static demo. It does not publish a release, push Git commits, change repository visibility, enable Pages or deploy a site. Perform those actions only after the owner authorizes them.
+The owner-authorized initial push and GitHub Pages deployment completed on 2026-11-08. The [live demo](https://ethanclarke0705.github.io/ReplicaLab/) has passed hosted functional checks; see the [release review](release-review.md). Subsequent deployments remain manual. No release tag or npm package has been published.
 
 ## Local release checks
 
@@ -31,15 +31,15 @@ Relative URLs use Vite's [relative base](https://vite.dev/guide/build#relative-b
 
 The build writes `NOTICE.txt` into the artifact using the project license and installed React, React DOM and Scheduler licenses and versions. Keep that file with the distributed assets. Reassess runtime notices when adding or replacing bundled dependencies.
 
-## GitHub Pages: later, with authorization
+## GitHub Pages deployment
 
 The workflow at `.github/workflows/pages.yml` has no push, PR or release trigger. Both jobs are restricted to `main`; `publish` defaults to false. The build job runs the full release checks and advisory audit before uploading a Pages artifact retained for seven days. The deploy job runs only when the explicitly supplied boolean is true.
 
-After authorization:
+For an authorized deployment (Pages and the main-only environment are already configured for this repository):
 
 1. Push the reviewed commits, then wait for the Linux and Windows CI jobs to pass. The workflow must exist on the default branch before it can be dispatched.
 2. In repository Settings → Pages, choose **GitHub Actions** as the publishing source. The workflow does not enable Pages or change repository visibility for you.
-3. Configure the `github-pages` environment to allow `main` only. Add required reviewers where the repository plan supports them. These settings are external to the workflow and have not been changed by local preparation.
+3. Configure the `github-pages` environment to allow `main` only. Add required reviewers where the repository plan supports them. These settings are external to the workflow. The initial deployment configured Pages with the GitHub Actions source and verified the main-only environment; required reviewers were not added.
 4. Run **Demo artifact and optional Pages deployment** on `main` with publishing unchecked. Inspect the run's commit SHA, checks and artifact. This builds but does not deploy.
 5. Once that exact revision is approved, run it on `main` with **Publish the verified demo to GitHub Pages** checked. Confirm `main` still points to the approved SHA. The workflow rebuilds and verifies the selected revision before deployment.
 6. Use the URL returned by the deployment job; do not advertise an assumed URL before it succeeds. Verify the deployed page, assets, interaction and storage from that origin.
