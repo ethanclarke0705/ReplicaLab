@@ -24,10 +24,12 @@
     "check:repo": "node scripts/check-repository.mjs --history",
     "test:tooling": "node --test scripts/tests/demo.test.mjs",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm test:tooling && pnpm build && pnpm demo:check",
-    "release:check": "pnpm check && pnpm check:repo && node examples/reconciliation.mjs && node examples/network-scenarios.mjs && node examples/restoration.mjs"
+    "release:check": "pnpm check && pnpm check:repo && node examples/reconciliation.mjs && node examples/network-scenarios.mjs && node examples/restoration.mjs",
+    "test:browser": "pnpm build && playwright test"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.0",
     "@testing-library/react": "16.3.3",
     "@testing-library/user-event": "14.6.8",
     "@types/react": "19.3.0",

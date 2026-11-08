@@ -15,5 +15,10 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["packages/**/*.ts", "vitest.config.ts"]
+  "include": [
+    "packages/**/*.ts",
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "tests/browser/**/*.ts"
+  ]
 }
