@@ -32,6 +32,12 @@ importers:
 
   packages/core: {}
 
+  packages/simulator:
+    dependencies:
+      '@replicalab/core':
+        specifier: workspace:*
+        version: link:../core
+
 packages:
 
   '@cacheable/memory@2.2.0':
