@@ -39,10 +39,12 @@ Convergence assumes globally unique, non-reused replica identities; consistent i
 
 ## Identity and persistence
 
-The current constructor always creates a fresh in-memory replica. Receiving an unknown operation from its own ID is rejected to expose identity reuse instead of silently resetting a counter. Create a new identity after losing state. Do not use `receive` as a restoration API. Milestone 4 must atomically persist and restore identity, local sequence, logical clock and complete history before permitting new writes; that feature is not implemented yet.
+The constructor creates a fresh in-memory replica. Receiving an unknown operation from its own ID is rejected to expose identity reuse instead of silently resetting a counter. Create a new identity after losing state. Do not use `receive` as a restoration API.
+
+`checkpoint()` returns a versioned immutable record containing identity, local sequence, logical clock and complete history. `Replica.restore(unknown)` validates the schema, operations, unique IDs, per-origin timestamp progression, clock bounds and contiguous local history before returning a new replica. Remote history may contain gaps. Winners are rebuilt using normal operation ordering, without introducing receive events or advancing the saved clock. No partially restored replica is exposed on failure. The browser adapter commits all replicas together; see [persistence](persistence.md) for its transaction and failure model.
 
 ## Cost and tests
 
 History and tombstones are unbounded. New remote operations scan known history to validate origin ordering (O(n)); history and summaries sort O(n log n). Exact-ID reconciliation uses O(n + m) temporary space for n local records and m advertised IDs. These costs are intentional for an inspectable initial engine, not a scalable production protocol. Compaction requires a separate design that cannot resurrect deleted data.
 
-Unit tests cover clock updates, overflow, malformed records, tie-breaking, identity collisions, immutable values, tombstones and missing-history gaps. Seeded fast-check tests compare shuffled and duplicated delivery with an independent winner fold, and reconcile generated offline histories. The fixed seeds are `20261108` and `84117`, each with 250 runs. Network integration tests now live in `packages/simulator/tests`; persistence remains a future milestone.
+Unit tests cover clock updates, overflow, malformed records, tie-breaking, identity collisions, immutable values, tombstones and missing-history gaps. Seeded fast-check tests compare shuffled and duplicated delivery with an independent winner fold, and reconcile generated offline histories. The fixed seeds are `20261108` and `84117`, each with 250 runs. Checkpoint restoration has a further 100 generated histories with seed `440026`. Network integration tests live in `packages/simulator/tests`; browser storage and reload tests live in `apps/playground/tests`.

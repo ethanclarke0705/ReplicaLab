@@ -1,6 +1,6 @@
 # Playground
 
-Milestone 3 provides a responsive React/Vite interface over the real replication engine and deterministic simulator. There is no backend, real network connection or persistence. Run `pnpm dev` from the repository root; `pnpm build` followed by `pnpm preview` serves the production bundle locally.
+The playground provides a responsive React/Vite interface over the real replication engine and deterministic simulator. Milestone 4 adds IndexedDB persistence without a backend or real network connection. Run `pnpm dev` from the repository root; `pnpm build` followed by `pnpm preview` serves the production bundle locally. These usually use different ports and therefore have separate browser storage.
 
 ## Controls
 
@@ -8,7 +8,7 @@ Milestone 3 provides a responsive React/Vite interface over the real replication
 - Disconnect a device to edit it offline. Reconnect it and advance time to let the simulator exchange missing operations. Link buttons partition individual bidirectional connections; a remaining route through the third device may still allow recovery.
 - Apply latency, jitter, packet-loss and duplication settings to future packet sends. Jitter can reorder delivery. Recovery summaries and responses use the same lossy transport as edits; permanent isolation or 100% loss can prevent convergence.
 - Run advances simulated time by 100 ms per browser timer tick. Pause stops that timer; Step event executes the next scheduled task, while +100 ms advances a fixed interval. Browser throttling can slow playback relative to wall-clock time. Sync now requests reconciliation but does not deliver queued packets immediately.
-- Reset lab creates a fresh session using the entered seed. The default seed is 42, latency is 200 ms and the retry interval is 500 ms. The initial shared value has already been delivered at simulated time 200 ms.
+- Reset lab creates a fresh session using the entered seed and replaces the saved lab. The default seed is 42, latency is 200 ms and the retry interval is 500 ms. The initial shared value has already been delivered at simulated time 200 ms.
 - Run scenario creates a fresh session with the active seed, executes the selected real scenario to completion, and pauses for inspection. It does not animate a prerecorded script. The eight scenarios cover normal sync, offline recovery, concurrent edits, delays, duplication, reordering, stale updates against deletion, and partition recovery. Scenario-specific network settings replace the previous controls.
 
 ## Inspecting results
@@ -29,4 +29,10 @@ Browser verification covered desktop (1440 px), mobile (390 px, no horizontal ov
 
 ![Production playground showing concurrent-write resolution](images/playground-desktop.jpg)
 
-Reloading the page discards the session. No localStorage, sessionStorage, IndexedDB, durable identity, import/export or restoration adapter has been added. Persistence is Milestone 4 and has not started.
+## Saving and reloading
+
+The storage banner distinguishes saving, saved and failed states. Wait for “Saved to this browser” before closing. Reload restores replica identities, clocks, counters, full histories, network conditions, connectivity and the seed, with playback paused. Operation history survives; the event timeline, pending packets and simulated clock start fresh at zero. Recovery retries resume when you advance time, at the default 500 ms interval.
+
+Storage failures pause editing and playback. Retry saving after resolving the storage error; unsaved changes remain in memory. A conflicting save from another tab requires reloading the newer lab and discarding this tab's unsaved changes. Unreadable or unsupported checkpoints are not automatically replaced. Startup offers a retry or a temporary session that leaves saved data untouched.
+
+Production-browser verification for Milestone 4 confirmed an offline edit and tombstone across reload, continuing sequence numbers, reconnection convergence, and a second reload retaining the converged histories. The storage banner was also checked at 390 px with no horizontal overflow. See the [persistence contract](persistence.md) for storage scope, validation and failure limits. Milestone 5 has not started.

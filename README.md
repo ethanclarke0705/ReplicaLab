@@ -6,7 +6,7 @@ Independent devices can edit the same data while disconnected. Reconciliation mu
 
 ## Status
 
-Milestones 0–3 are implemented: a pnpm workspace, a tested headless replication engine, a deterministic network simulator and a React/Vite playground using those real packages. Persistence is not implemented.
+Milestones 0–4 are implemented: a pnpm workspace, a tested headless replication engine, a deterministic network simulator and a React/Vite playground with IndexedDB persistence.
 
 - Independent replicas with SET and DELETE operations over JSON values.
 - Lamport clocks and deterministic last-writer-wins resolution.
@@ -17,6 +17,7 @@ Milestones 0–3 are implemented: a pnpm workspace, a tested headless replicatio
 - Reconnection reconciliation and periodic recovery retries over the same lossy transport.
 - Chronological event inspection and eight reproducible headless scenarios.
 - Three editable replica panels, playback, network controls and conflict explanations.
+- Atomic browser checkpoints restoring identity, counters, tombstones and complete history.
 
 Last-writer-wins can discard concurrent updates from visible state. Convergence requires successful exchange of all operations; it is not promised during partitions or indefinite message loss.
 
@@ -43,7 +44,7 @@ Edit text or JSON on any replica, disconnect a device or partition a link, then 
 
 ![Concurrent edits resolved by the real engine](docs/images/playground-desktop.jpg)
 
-The session is memory-only: reloading or resetting clears it. See the [playground guide](docs/playground.md) for controls, architecture and limits.
+Wait for “Saved to this browser” before closing. Reload restores replicas and network settings, then starts a fresh paused simulation; queued packets and the event timeline are not restored. Reset lab and Run scenario replace the saved lab. See the [playground guide](docs/playground.md) and [persistence contract](docs/persistence.md).
 
 ## Try the engine
 
@@ -111,9 +112,9 @@ See [architecture](docs/architecture.md), [synchronisation](docs/synchronisation
 
 ## Current limitations
 
-State is memory-only. Replica IDs must be unique and must not be reused after losing state. Full history and event logs are retained without compaction, and reconciliation exchanges exact ID lists. Neither layer authenticates peers or detects causal concurrency. The simulator uses local message queues, not real networking. Numeric clocks stop with an error at JavaScript's safe-integer limit. See the design documents for detailed contracts and costs.
+The core and simulator remain in-memory libraries; the playground saves validated replica checkpoints in IndexedDB. Browser storage is origin-specific and can be cleared or evicted. Replica IDs must be unique within a lab; restoring their complete history and counters is required to continue them safely. Full history and event logs are retained without compaction, and reconciliation exchanges exact ID lists. Neither layer authenticates peers or detects causal concurrency. The simulator uses local message queues, not real networking. Numeric clocks stop with an error at JavaScript's safe-integer limit. See the design documents for detailed contracts and costs.
 
-Milestone 3 is complete. IndexedDB identity and history restoration are deferred to Milestone 4; no persistence work has started.
+Milestone 4 is complete. Milestone 5 release preparation and deployment have not started.
 
 ## License
 
