@@ -77,6 +77,19 @@ export class Replica {
     );
   }
 
+  /** Exact IDs preserve holes when operations arrive out of order. */
+  knownOperationIds(): readonly string[] {
+    return Object.freeze(this.history().map((operation) => operation.id));
+  }
+
+  /** A transport sends these operations and may safely retry a stale request. */
+  missingOperations(peerKnownIds: Iterable<string>): readonly Operation[] {
+    const known = new Set(peerKnownIds);
+    return Object.freeze(
+      this.history().filter((operation) => !known.has(operation.id)),
+    );
+  }
+
   receive(input: unknown): ReceiveResult {
     const operation = parseOperation(input);
     const existing = this.#operations.get(operation.id);
