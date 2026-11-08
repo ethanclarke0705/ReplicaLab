@@ -7,6 +7,6 @@
 - Run relevant tests during development and `pnpm check` before finishing a milestone. Never weaken assertions to conceal a failure.
 - Review the diff, stage only related files, then create a self-contained Conventional Commit: `type(scope): description`. Include the tests with their implementation. Never rewrite history or push without explicit approval.
 - Keep README and algorithm/architecture docs accurate. Separate implemented capabilities from plans and state the assumptions behind correctness claims.
-- Current authorised scope includes Milestone 3: a responsive, accessible React/Vite playground driven by the real engine and simulator. Stop and report before persistence (Milestone 4). Do not push or deploy.
+- Current authorised scope includes Milestone 4: IndexedDB persistence, validated restoration of identity/counters/history, error handling, tests and accessibility refinements. Stop and report before Milestone 5. Do not push or deploy.
 - No backend, authentication, cloud services, CRDTs or package publication in the initial scope. Do not commit credentials, environment files, build artifacts or temporary output.
 - Use `output/` (ignored) or system temp for diagnostics. Report checks actually run, confirmed commit hashes, limitations and next steps at each milestone.

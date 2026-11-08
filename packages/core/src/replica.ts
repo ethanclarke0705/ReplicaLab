@@ -7,6 +7,7 @@ import {
   type Operation,
 } from './operation.js';
 import type { JsonValue } from './value.js';
+import { parseCheckpoint, type ReplicaCheckpoint } from './checkpoint.js';
 
 export interface ReceiveResult {
   readonly status: 'applied' | 'superseded' | 'duplicate';
@@ -17,7 +18,7 @@ export interface ReceiveResult {
 /** An in-memory replica. Each live origin must have a unique, never-reused ID. */
 export class Replica {
   readonly #id: string;
-  readonly #clock = new LamportClock();
+  #clock = new LamportClock();
   readonly #operations = new Map<string, Operation>();
   readonly #winners = new Map<string, Operation>();
   #sequence = 0;
@@ -25,6 +26,26 @@ export class Replica {
   constructor(id: string) {
     assertReplicaId(id);
     this.#id = id;
+  }
+
+  /** Restore without treating historical operations as new receive events. */
+  static restore(input: unknown): Replica {
+    const data = parseCheckpoint(input);
+    const replica = new Replica(data.replicaId);
+    replica.#clock = new LamportClock(data.logicalTime);
+    replica.#sequence = data.localSequence;
+    for (const operation of data.operations) replica.#record(operation);
+    return replica;
+  }
+
+  checkpoint(): ReplicaCheckpoint {
+    return Object.freeze({
+      version: 1,
+      replicaId: this.#id,
+      logicalTime: this.#clock.value,
+      localSequence: this.#sequence,
+      operations: this.history(),
+    });
   }
 
   get id(): string {

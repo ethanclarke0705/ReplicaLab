@@ -2,6 +2,12 @@
 export class LamportClock {
   #value = 0;
 
+  constructor(value = 0) {
+    if (!Number.isSafeInteger(value) || value < 0)
+      throw new TypeError('Clock must be a nonnegative safe integer');
+    this.#value = value;
+  }
+
   get value(): number {
     return this.#value;
   }
