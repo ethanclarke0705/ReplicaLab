@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased — 0.1.0 preparation
+## 0.1.0 - 2026-11-08
 
-This is a draft for the first public release; no tag or release has been published by this preparation.
+First public GitHub release. [Live demo](https://ethanclarke0705.github.io/ReplicaLab/). Packages remain private and are not published to npm.
 
 ### Added
 

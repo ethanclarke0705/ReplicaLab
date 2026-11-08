@@ -1,6 +1,6 @@
 # Release and demo deployment
 
-The owner-authorized initial push and GitHub Pages deployment completed on 2026-11-08. The [live demo](https://ethanclarke0705.github.io/ReplicaLab/) has passed hosted functional checks; see the [release review](release-review.md). Subsequent deployments remain manual. No release tag or npm package has been published.
+The owner-authorized initial push and GitHub Pages deployment completed on 2026-11-08. The [live demo](https://ethanclarke0705.github.io/ReplicaLab/) has passed hosted functional checks; see the [release review](release-review.md). Subsequent deployments remain manual. [v0.1.0](https://github.com/ethanclarke0705/ReplicaLab/releases/tag/v0.1.0) is the first GitHub release; packages remain private and unpublished to npm.
 
 ## Local release checks
 
@@ -48,7 +48,7 @@ The deployment job alone receives `pages: write` and `id-token: write`. There is
 
 ## Versioning and release notes
 
-All workspace packages currently carry version `0.1.0` and remain `private: true`. Keep that protection; npm publication is out of scope. `CHANGELOG.md` holds an Unreleased draft, not an assertion that a release exists.
+All workspace packages currently carry version `0.1.0` and remain `private: true`. Keep that protection; npm publication is out of scope. `CHANGELOG.md` records the first GitHub release, v0.1.0, dated 2026-11-08.
 
 Before an authorized release, confirm the version, date, scope, successful CI run and demo status; promote the appropriate changelog section. Review commit author email visibility and the MIT attribution. Then create the agreed annotated tag and GitHub release against the reviewed commit, only with permission to do so. No tag or release is created automatically by these workflows.
 

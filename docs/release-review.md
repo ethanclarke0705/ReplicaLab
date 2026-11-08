@@ -1,6 +1,6 @@
 # Release review — 2026-11-08
 
-Scope: prepare the first public release and deployable demo, followed by the owner-authorized push and GitHub Pages deployment. Milestones 0-5 are complete; no release tag or npm package has been published.
+Scope: prepare the first public release and deployable demo, followed by the owner-authorized push and GitHub Pages deployment. Milestones 0-5 are complete; v0.1.0 is the first GitHub release; packages remain private and unpublished to npm.
 
 ## Reviewed results
 
@@ -39,7 +39,7 @@ The initial deployment used commit `5f47cd7eb30eb043c170007839be386c82009f83`:
 - The [live demo](https://ethanclarke0705.github.io/ReplicaLab/) and all four referenced/distributed assets returned HTTP 200 with appropriate content types.
 - On the public origin, an offline edit survived reload with replica identity, counters and connectivity intact; reconnection and simulated delivery converged. The concurrent-edit scenario and superseded-operation inspector worked. A 390 px viewport had no horizontal overflow.
 
-Publishing remains manually dispatched; pushing a commit does not deploy it. Release tags, GitHub releases and npm publication have not been performed.
+Publishing remains manually dispatched; pushing a commit does not deploy it. The first GitHub release is v0.1.0. npm publication remains out of scope.
 
 The browser checks are focused functional/layout checks, not a comprehensive accessibility audit or cross-browser certification. IndexedDB schema migration beyond version 1 is unimplemented. Full histories and whole-checkpoint writes remain intended for small demonstrations.
 

@@ -9,6 +9,6 @@
 | 4         | IndexedDB identity, counters and history restoration  | Complete |
 | 5         | Screenshots, deployable demo and release review       | Complete |
 
-Milestone 5 is complete. Hosted CI passes on Linux and Windows, and the [public demo](https://ethanclarke0705.github.io/ReplicaLab/) is deployed and verified. Deployments remain manual. Release tagging and package publication are separate future actions. See the [release review](release-review.md) and [release guide](releasing.md).
+Milestone 5 is complete. Hosted CI passes on Linux and Windows, and the [public demo](https://ethanclarke0705.github.io/ReplicaLab/) is deployed and verified. Deployments remain manual. The first GitHub release is v0.1.0; npm publication remains out of scope. See the [release review](release-review.md) and [release guide](releasing.md).
 
 WebSockets, alternative resolution policies, CRDTs, benchmarks and npm publication are future considerations, not initial MVP requirements.
