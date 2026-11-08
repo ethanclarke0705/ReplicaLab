@@ -4,6 +4,37 @@ import { LabSession } from '../src/session.js';
 import { openLabStore, StorageConflict } from '../src/storage.js';
 import { scenarioNames } from '@replicalab/simulator';
 
+test('a newer database version is not downgraded or cleared', async () => {
+  const factory = new IDBFactory();
+  const db = await new Promise<IDBDatabase>((resolve, reject) => {
+    const request = factory.open('replicalab', 2);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+  });
+  db.close();
+  await expect(openLabStore(factory)).rejects.toMatchObject({
+    name: 'VersionError',
+  });
+});
+
+test('open connections close on version change so an upgrade can complete', async () => {
+  const factory = new IDBFactory();
+  const store = await openLabStore(factory);
+  await store.save(new LabSession().checkpoint(), 0);
+  const upgraded = await new Promise<IDBDatabase>((resolve, reject) => {
+    const request = factory.open('replicalab', 2);
+    request.onblocked = () =>
+      reject(new Error('Old connection blocked upgrade'));
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+  });
+  expect(upgraded.version).toBe(2);
+  await expect(store.load()).rejects.toMatchObject({
+    name: 'InvalidStateError',
+  });
+  upgraded.close();
+});
+
 test('all real scenario histories can be restored and continued', () => {
   for (const name of scenarioNames) {
     const lab = new LabSession(42, name);

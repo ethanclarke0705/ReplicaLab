@@ -11,10 +11,42 @@ import userEvent from '@testing-library/user-event';
 import { IDBFactory } from 'fake-indexeddb';
 import { afterEach, expect, test, vi } from 'vitest';
 import { PersistentPlayground } from '../src/PersistentPlayground.js';
-import { openLabStore, type LabStore } from '../src/storage.js';
+import {
+  openLabStore,
+  StorageConflict,
+  type LabStore,
+} from '../src/storage.js';
 import { LabSession } from '../src/session.js';
 
 afterEach(cleanup);
+
+test('a stale-tab conflict disables writes and cannot force a retry over newer saved data', async () => {
+  const store: LabStore = {
+    load: async () => ({
+      revision: 1,
+      checkpoint: new LabSession().checkpoint(),
+    }),
+    close: vi.fn(),
+    save: vi.fn().mockRejectedValue(new StorageConflict()),
+  };
+  const user = userEvent.setup();
+  render(<PersistentPlayground openStore={async () => store} />);
+  await screen.findByText(/Saved to this browser/);
+  await user.click(
+    screen.getByRole('button', { name: 'Disconnect replica A' }),
+  );
+  expect((await screen.findByRole('alert')).textContent).toContain(
+    'Another tab',
+  );
+  expect(screen.queryByRole('button', { name: 'Retry saving' })).toBeNull();
+  expect(
+    (
+      screen.getByRole('group', {
+        name: 'Simulation controls and inspection',
+      }) as HTMLFieldSetElement
+    ).disabled,
+  ).toBe(true);
+});
 
 test('reset replaces the durable lab and reload cannot resurrect discarded edits', async () => {
   const factory = new IDBFactory();
