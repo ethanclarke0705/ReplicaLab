@@ -1,7 +1,7 @@
 # ReplicaLab engineering instructions
 
 - Build an accurate, inspectable distributed key-value synchronisation engine and playground.
-- Keep `packages/core` independent of browsers, React, timers and simulator code. Simulator code consumes only public engine APIs; the future playground composes those layers.
+- Keep `packages/core` independent of browsers, React, timers and simulator code. Simulator code consumes only public engine APIs; the playground composes those layers.
 - Use strict TypeScript, explicit contracts, deterministic algorithms and focused modules. Do not suppress type errors or add runtime dependencies without a concrete need.
 - Include deterministic unit tests and seeded fast-check properties with changes to replication semantics. Test tombstones, duplicate and reordered delivery, convergence and clock rules.
 - Run relevant tests during development and `pnpm check` before finishing a milestone. Never weaken assertions to conceal a failure.

@@ -1,12 +1,12 @@
 # ReplicaLab
 
-An open-source distributed data synchronisation engine and planned interactive playground for exploring offline-first systems, network failures and conflict resolution.
+An open-source distributed data synchronisation engine and interactive playground for exploring offline-first systems, network failures and conflict resolution.
 
 Independent devices can edit the same data while disconnected. Reconciliation must tolerate duplicates, delays and different delivery orders. ReplicaLab makes those rules explicit and testable, starting with a headless TypeScript engine.
 
 ## Status
 
-Milestones 0–2 are implemented: a pnpm workspace, a tested headless replication engine and a deterministic network simulator. The browser playground and persistence are not implemented yet.
+Milestones 0–3 are implemented: a pnpm workspace, a tested headless replication engine, a deterministic network simulator and a React/Vite playground using those real packages. Persistence is not implemented.
 
 - Independent replicas with SET and DELETE operations over JSON values.
 - Lamport clocks and deterministic last-writer-wins resolution.
@@ -16,6 +16,7 @@ Milestones 0–2 are implemented: a pnpm workspace, a tested headless replicatio
 - Simulated latency, jitter, packet loss, duplication, reordering and partitions.
 - Reconnection reconciliation and periodic recovery retries over the same lossy transport.
 - Chronological event inspection and eight reproducible headless scenarios.
+- Three editable replica panels, playback, network controls and conflict explanations.
 
 Last-writer-wins can discard concurrent updates from visible state. Convergence requires successful exchange of all operations; it is not promised during partitions or indefinite message loss.
 
@@ -29,9 +30,20 @@ pnpm check
 pnpm test:watch
 pnpm demo
 pnpm demo:network
+pnpm dev
 ```
 
 `pnpm check` runs formatting, linting, type checking, tests and package builds. Individual commands are `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build`. Run `pnpm format` to format changes. Generated ESM and declarations go into each package's ignored `dist/` folder.
+
+## Try the playground
+
+Run `pnpm dev` and open the localhost URL printed by Vite. For a production preview, run `pnpm build` then `pnpm preview`.
+
+Edit text or JSON on any replica, disconnect a device or partition a link, then run or step simulated time. Adjust latency, jitter, loss and duplication to observe recovery. Choose one of eight scenarios to run a fresh deterministic example, then inspect its completed timeline, operation history and conflict decisions.
+
+![Concurrent edits resolved by the real engine](docs/images/playground-desktop.jpg)
+
+The session is memory-only: reloading or resetting clears it. See the [playground guide](docs/playground.md) for controls, architecture and limits.
 
 ## Try the engine
 
@@ -86,14 +98,14 @@ Time advances only through `advanceBy` or `step`; there are no real timers. See 
 
 ```mermaid
 flowchart LR
-  Playground[React playground · planned] --> Simulator[Network simulator]
+  Playground[React playground] --> Simulator[Network simulator]
   Playground --> Core[Replication core]
   Simulator --> Core
 ```
 
 - `packages/core`: transport-independent operation and replica logic.
 - `packages/simulator`: deterministic scheduler, packet transport, recovery and scenarios.
-- `apps/playground`: planned React/Vite interface.
+- `apps/playground`: React/Vite interface, session adapter and UI integration tests.
 
 See [architecture](docs/architecture.md), [synchronisation](docs/synchronisation.md), [roadmap](docs/roadmap.md) and [contributing](CONTRIBUTING.md).
 
@@ -101,7 +113,7 @@ See [architecture](docs/architecture.md), [synchronisation](docs/synchronisation
 
 State is memory-only. Replica IDs must be unique and must not be reused after losing state. Full history and event logs are retained without compaction, and reconciliation exchanges exact ID lists. Neither layer authenticates peers or detects causal concurrency. The simulator uses local message queues, not real networking. Numeric clocks stop with an error at JavaScript's safe-integer limit. See the design documents for detailed contracts and costs.
 
-Next is Milestone 3: the React/Vite playground, subject to the next scope instruction. IndexedDB follows in Milestone 4. No playground work has started.
+Milestone 3 is complete. IndexedDB identity and history restoration are deferred to Milestone 4; no persistence work has started.
 
 ## License
 
